@@ -8,7 +8,16 @@ export function Field(props: FieldProps) {
   const { lightColor, darkColor, ...otherProps } = props;
 
   const getColorByType = (item: CellType): string => {
-    return 'green';
+    switch(item){
+      case CellType.Empty: 
+        return 'gray';
+      case CellType.Forbidden:
+        return 'gray';
+      case CellType.Ship:
+        return 'black';
+      default:
+        return 'green'
+    }
   };
 
   const fieldData = props.Items.map((line, index) => (
