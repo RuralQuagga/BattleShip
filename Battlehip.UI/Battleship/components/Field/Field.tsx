@@ -1,11 +1,10 @@
 import { CellType, FieldMatrix } from '../../models/field/fieldMatrix';
-import { ThemeProps } from '../Themed';
 import { View as DefaultView, StyleSheet } from 'react-native';
 
-export type FieldProps = ThemeProps & DefaultView['props'] & FieldMatrix;
+export type FieldProps = DefaultView['props'] & FieldMatrix;
 
 export function Field(props: FieldProps) {
-  const { lightColor, darkColor, ...otherProps } = props;
+  const {...otherProps } = props;
 
   const getColorByType = (item: CellType): string => {
     switch(item){

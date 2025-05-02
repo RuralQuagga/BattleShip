@@ -8,12 +8,11 @@ import {
 import { useEffect, useState } from 'react';
 import { CellType } from '../../models/field/fieldMatrix';
 import { GetBatlefield } from '../../endpoints/batleFieldEndpoints';
-import { ThemeProps } from '../Themed';
 
-export type BattlefieldProps = ThemeProps & DefaultView['props'];
+export type BattlefieldProps = DefaultView['props'];
 
 export function Battlefield(props: BattlefieldProps) {
-  const { lightColor, darkColor, ...otherProps } = props;
+  const { ...otherProps } = props;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [myField, setMyField] = useState<CellType[][]>([[]]);

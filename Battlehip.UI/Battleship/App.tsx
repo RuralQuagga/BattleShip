@@ -1,21 +1,20 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { Battlefield } from './components/BattleField/BattleField';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import MainNavigator from './navigation/MainNavigator';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Battlefield/>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <NavigationContainer>
+        <MainNavigator />
+      </NavigationContainer>
+    </SafeAreaView>    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,    
   },
 });
