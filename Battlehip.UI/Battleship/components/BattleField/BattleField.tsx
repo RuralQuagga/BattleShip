@@ -1,13 +1,14 @@
-import { CellType } from '@/models/field/fieldMatrix';
 import { Field } from '../Field/Field';
-import { ThemeProps, useThemeColor, Text } from '../Themed';
+import { Text } from 'react-native';
 import {
   ActivityIndicator,
   View as DefaultView,
   StyleSheet,
 } from 'react-native';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { CellType } from '../../models/field/fieldMatrix';
+import { GetBatlefield } from '../../endpoints/batleFieldEndpoints';
+import { ThemeProps } from '../Themed';
 
 export type BattlefieldProps = ThemeProps & DefaultView['props'];
 
@@ -18,11 +19,11 @@ export function Battlefield(props: BattlefieldProps) {
   const [myField, setMyField] = useState<CellType[][]>([[]]);
   const [apponentField, setApponentField] = useState<CellType[][]>([[]]);
 
+  
+
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        'https://localhost:7166/gameplay/field/generate'
-      );
+      const response = await GetBatlefield();
       setMyField(response.data as CellType[][]);
     } catch (err) {
       setError((err as Error).message);

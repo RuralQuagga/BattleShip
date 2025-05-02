@@ -1,4 +1,4 @@
-import { CellType, FieldMatrix } from '@/models/field/fieldMatrix';
+import { CellType, FieldMatrix } from '../../models/field/fieldMatrix';
 import { ThemeProps } from '../Themed';
 import { View as DefaultView, StyleSheet } from 'react-native';
 
