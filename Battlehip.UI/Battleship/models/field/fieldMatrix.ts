@@ -3,7 +3,8 @@ export type FieldMatrix = {
 }
 
 export enum CellType{
-    Empty = 1,
-    Ship,
-    Forbidden
+    Ship = 1,
+    Empty,
+    Forbidden,
+    DeadShip
 }
