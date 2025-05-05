@@ -1,4 +1,6 @@
+using BattleShip.API.Constraints;
 using BattleShip.API.Endpoints.Field;
+using BattleShip.API.Endpoints.Session;
 using BattleShip.Application;
 using Microsoft.Extensions.Options;
 
@@ -18,7 +20,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddBattleFieldApplicationServices();
+builder.Services.Configure<RouteOptions>(options =>
+ {
+     options.ConstraintMap.Add("string", typeof(StringConstraint));
+ });
+
+ builder.Services.AddBattleFieldApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -32,6 +39,7 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 app.RegisterFieldEndpoints();
+app.RegisterSessionEndpoints();
 
 app.MapGet("/ping", () =>
 {    
