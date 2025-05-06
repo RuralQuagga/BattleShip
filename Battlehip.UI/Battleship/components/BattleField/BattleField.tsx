@@ -46,7 +46,7 @@ export function Battlefield(props: BattlefieldProps) {
   return (
     <>
       <Field {...otherProps} Items={myField} />
-      <Field {...otherProps} Items={apponentField} />
+      {/* <Field {...otherProps} Items={apponentField} /> */}
     </>
   );
 }
