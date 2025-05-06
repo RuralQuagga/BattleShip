@@ -1,4 +1,3 @@
-import { Field } from '../Field/Field';
 import { Text } from 'react-native';
 import {
   ActivityIndicator,
@@ -6,24 +5,24 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useEffect, useState } from 'react';
-import { CellType } from '../../models/field/fieldMatrix';
+import { CellType, FieldDto } from '../../models/field/fieldMatrix';
 import { GetBatlefield } from '../../endpoints/batleFieldEndpoints';
+import { Field } from '../Field/Field';
 
-export type BattlefieldProps = DefaultView['props'];
+type Props = {
+  sessionId: string
+}
 
-export function Battlefield(props: BattlefieldProps) {
-  const { ...otherProps } = props;
+export function Battlefield(props: Props) {  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
-  const [myField, setMyField] = useState<CellType[][]>([[]]);
+  const [myField, setMyField] = useState<FieldDto>();
   const [apponentField, setApponentField] = useState<CellType[][]>([[]]);
-
-  
 
   const fetchData = async () => {
     try {
-      const response = await GetBatlefield();
-      setMyField(response.data as CellType[][]);
+      const response = await GetBatlefield(props.sessionId, true);
+      setMyField(response.data as FieldDto);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -45,7 +44,7 @@ export function Battlefield(props: BattlefieldProps) {
 
   return (
     <>
-      <Field {...otherProps} Items={myField} />
+      <Field matrix={myField?.fieldConfiguration} />
       {/* <Field {...otherProps} Items={apponentField} /> */}
     </>
   );

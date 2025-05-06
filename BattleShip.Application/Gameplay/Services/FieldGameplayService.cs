@@ -1,4 +1,6 @@
 ﻿using BattleShip.Application.Gameplay.Abstractions;
+using BattleShip.Application.Mappers.Field;
+using BattleShip.Application.Models;
 using BattleShip.Application.Objects.Field;
 using BattleShip.Common.Enums;
 using BattleShip.Persistance.MongoDb.Entities;
@@ -7,16 +9,32 @@ using MongoDB.Bson;
 
 namespace BattleShip.Application.Gameplay.Services;
 
-internal class FieldGameplayService(IRepository<GameSession> sessionRepository) : IFieldGameplayService
+internal class FieldGameplayService(
+    IRepository<GameSession> sessionRepository,
+    IRepository<GameField> fieldRepository) : IFieldGameplayService
 {
-    public async Task<CellType[][]> GenerateBattleField()
+    public async Task<GameFieldDto> GenerateBattleField(string sessionId, FieldType fieldType, CancellationToken cancellationToken)
     {
-        var field = new BattleField(10);
+        var session = await sessionRepository.GetByIdAsync(sessionId, cancellationToken);
 
-        field.PrepareField();
-        field.GenerateField();
+        if(session.State != SessionState.Preparing)
+        {
+            throw new InvalidOperationException($"Unable to generate field for session in {session.State} state");
+        }
 
-        return await Task.FromResult(field.Field);
+        var field = GenerateNewField();
+
+        var fieldEntity = new GameField
+        {
+            FieldId = ObjectId.GenerateNewId().ToString(),
+            IsPlayerField = fieldType == FieldType.User,
+            SessionId = sessionId,
+            FieldConfiguration = field
+        };
+
+        await fieldRepository.AddAsync(fieldEntity, cancellationToken);
+
+        return fieldEntity.ToDto();
     }
 
     public async Task<string> ChangeSessionStateToInProgress(string sessionId, CancellationToken cancellationToken)
@@ -56,6 +74,27 @@ internal class FieldGameplayService(IRepository<GameSession> sessionRepository) 
         return session.Id;
     }
 
+    public async Task<GameFieldDto> RegenerateBattleField(string fieldId, CancellationToken cancellationToken)
+    {
+        var entity = await fieldRepository.GetByIdAsync(fieldId, cancellationToken);
+        var newField = GenerateNewField();
+
+        entity.FieldConfiguration = newField;
+        await fieldRepository.UpdateAsync(entity, cancellationToken);
+
+        return entity.ToDto();
+    }
+
+    private CellType[][] GenerateNewField()
+    {
+        var field = new BattleField(10);
+
+        field.PrepareField();
+        field.GenerateField();
+
+        return field.Field;
+    }
+
     private async Task CloseOngoingSessions(IEnumerable<GameSession> sessions, CancellationToken cancellationToken)
     {
         foreach(var session in sessions)
@@ -65,5 +104,5 @@ internal class FieldGameplayService(IRepository<GameSession> sessionRepository) 
 
             await sessionRepository.UpdateAsync(session, cancellationToken);
         }
-    }
+    }    
 }
