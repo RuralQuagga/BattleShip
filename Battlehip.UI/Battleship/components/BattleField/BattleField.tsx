@@ -1,66 +1,17 @@
-import { Text } from 'react-native';
-import {
-  ActivityIndicator,
-  View as DefaultView,
-  StyleSheet,
-} from 'react-native';
-import { useEffect, useState } from 'react';
-import { CellType, FieldDto } from '../../models/field/fieldMatrix';
-import { GetBatlefield } from '../../endpoints/batleFieldEndpoints';
+import { FieldDto } from '../../models/field/fieldMatrix';
 import { Field } from '../Field/Field';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/MainNavigator';
 
-type Props = {
-  sessionId: string
-}
+type Props = {  
+  gameField?: FieldDto;
+  isReadonly: boolean;
+};
 
 export function Battlefield(props: Props) {  
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-  const [myField, setMyField] = useState<FieldDto>();
-  const [apponentField, setApponentField] = useState<CellType[][]>([[]]);
-
-  const fetchData = async () => {
-    try {
-      const response = await GetBatlefield(props.sessionId, true);
-      setMyField(response.data as FieldDto);
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <ActivityIndicator size='large' />;
-  }
-
-  if (error !== '') {
-    return <Text>Ошибка: {error}</Text>;
-  }
-
   return (
     <>
-      <Field matrix={myField?.fieldConfiguration} />
-      {/* <Field {...otherProps} Items={apponentField} /> */}
+      <Field field={props.gameField} isReadOnly={props.isReadonly} />      
     </>
   );
 }
-
-const style = StyleSheet.create({
-  field: {
-    backgroundColor: '#8aa7db',
-    margin: '1%',
-    height: '49%',
-    width: '96%',
-  },
-  fieldName: {
-    fontSize: 15,
-    fontWeight: '600',
-    opacity: 0.5,
-    color: 'black',
-  },
-});

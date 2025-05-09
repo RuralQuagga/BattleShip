@@ -5,5 +5,7 @@ public enum CellType
     Ship = 1,
     Empty,
     Forbidden,
-    DeadShip
+    DeadShip,
+    Miss,
+    ForbiddenMiss
 }

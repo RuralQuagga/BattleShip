@@ -8,7 +8,7 @@ import { Button } from '../Button/Button';
 
 type LayoutProps = {
   children: React.ReactNode;
-  onBacckBtn: (event: GestureResponderEvent) => void;
+  onBacckBtn?: (event: GestureResponderEvent) => void;
 };
 
 export const Layout = (props: LayoutProps) => {
@@ -20,12 +20,14 @@ export const Layout = (props: LayoutProps) => {
     >
       <View style={style.contentConteiner}>{props.children}</View>
       <View style={style.backButton}>
-        <Button
-          onPress={props.onBacckBtn}
-          title='<'
-          btnStyle={style.btnStyle}
-          textStyle={style.btnName}
-        />
+        {props.onBacckBtn && (
+          <Button
+            onPress={props.onBacckBtn}
+            title='<'
+            btnStyle={style.btnStyle}
+            textStyle={style.btnName}
+          />
+        )}
       </View>
     </ImageBackground>
   );

@@ -1,12 +1,16 @@
-import { CellType, FieldMatrix } from '../../models/field/fieldMatrix';
-import { View as DefaultView, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { CellType, CheckCellApiRequest, FieldDto } from '../../models/field/fieldMatrix';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { CheckCell } from '../../endpoints/batleFieldEndpoints';
 
 export type Props = {
-  matrix: CellType[][] | undefined,
+  field: FieldDto | undefined,
+  isReadOnly: boolean
 };
 
 export function Field(props: Props) {
   const {...otherProps } = props;
+  const [field, setField] = useState<FieldDto>();
 
   const getColorByType = (item: CellType): string => {
     switch(item){
@@ -16,26 +20,52 @@ export function Field(props: Props) {
         return 'gray';
       case CellType.Ship:
         return 'black';
+      case CellType.DeadShip:
+        return 'red';
+      case CellType.ForbiddenMiss || CellType.Miss :
+        return 'blue'
       default:
         return 'green'
     }
-  };
+  }; 
+  
+  const checkCell = async (line: number, cell: number) =>{
+    if(!field){
+      throw new Error("Field is undefined");
+    }
+    const request: CheckCellApiRequest = {
+      fieldId: field.fieldId,
+      line,
+      cell
+    };
 
-  const fieldData = props.matrix?.map((line, index) => (
-    <DefaultView key={index} style={style.line}>
+    const result = await CheckCell(request);
+    setField(result.data);
+  }
+
+  useEffect(()=>{
+    if(!field){
+      setField(props.field);
+    }    
+  })
+
+  const fieldData = field?.fieldConfiguration.map((line, index) => (
+    <View key={index} style={style.line}>
       {line.map((cell, cellIndex) => (
-        <DefaultView
+        <Pressable style={style.prsbl} onPress={() => {!props.isReadOnly && checkCell(index, cellIndex)}}>        
+        <View          
           key={index + cellIndex}          
           style={[{backgroundColor: getColorByType(cell)}, style.cell]}
         />
+        </Pressable>
       ))}
-    </DefaultView>
+    </View>
   ));
   
   return (
-    <DefaultView style={style.field} {...otherProps}>
+    <View style={style.field} {...otherProps}>
       {fieldData}
-    </DefaultView>
+    </View>
   );
 }
 
@@ -51,8 +81,10 @@ const style = StyleSheet.create({
     borderRadius: '10%',
     borderWidth: 1.5,
     flex: 1,
-    opacity: 0.5,
-    padding: 1
+    opacity: 0.5,    
+  },
+  prsbl:{
+    flex: 1
   },
   line: {
     flexDirection: 'row',
