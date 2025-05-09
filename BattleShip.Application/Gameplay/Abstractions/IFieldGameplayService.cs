@@ -12,4 +12,6 @@ public interface IFieldGameplayService
     Task<string> StartNewSession(CancellationToken cancellationToken);
 
     Task<string> ChangeSessionStateToInProgress(string sessionId, CancellationToken cancellationToken);
+
+    Task<GameFieldDto> CheckCell(CheckCellRequest request, CancellationToken cancellationToken);
 }

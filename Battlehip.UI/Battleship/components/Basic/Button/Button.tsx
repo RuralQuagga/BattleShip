@@ -3,16 +3,21 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  Image,
   TextStyle,
   ViewStyle,
+  ImageSourcePropType,
+  ImageStyle,
 } from 'react-native';
 
 type ButtonProps = {
   onPress: (event: GestureResponderEvent) => void;
   title: string;
+  imgSource?: ImageSourcePropType;
   btnStyle?: ViewStyle;
   pressedBtnStyle?: ViewStyle;
   textStyle?: TextStyle;
+  imgStyle?: ImageStyle; 
 };
 
 export const Button = (props: ButtonProps) => {
@@ -24,7 +29,11 @@ export const Button = (props: ButtonProps) => {
         pressed && [style.buttonPressed, props.pressedBtnStyle],
       ]}
     >
-      <Text style={[style.text, props.textStyle]}>{props.title}</Text>
+      {props.imgSource ? (
+        <Image style={[style.image, props.imgStyle]} source={props.imgSource} />
+      ) : (
+        <Text style={[style.text, props.textStyle]}>{props.title}</Text>
+      )}
     </Pressable>
   );
 };
@@ -44,4 +53,8 @@ const style = StyleSheet.create({
     color: 'white',
     fontSize: 16,
   },
+  image:{
+    width: 50,
+    height: 50,
+  }
 });

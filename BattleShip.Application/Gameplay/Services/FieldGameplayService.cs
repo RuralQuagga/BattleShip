@@ -33,8 +33,29 @@ internal class FieldGameplayService(
         };
 
         await fieldRepository.AddAsync(fieldEntity, cancellationToken);
+        
+        if(fieldType == FieldType.Computer)
+        {
+            fieldEntity = HideShip(fieldEntity);
+        }
 
         return fieldEntity.ToDto();
+    }
+
+    private GameField HideShip(GameField fieldEntity)
+    {
+        for(var lineIndex = 0; lineIndex < fieldEntity.FieldConfiguration.Length; lineIndex ++)
+        {
+            for(var cellIndex = 0; cellIndex < fieldEntity.FieldConfiguration.Length; cellIndex++)
+            {
+                if (fieldEntity.FieldConfiguration[lineIndex][cellIndex] == CellType.Ship || fieldEntity.FieldConfiguration[lineIndex][cellIndex] == CellType.Forbidden)
+                {
+                    fieldEntity.FieldConfiguration[lineIndex][cellIndex] = CellType.Empty;
+                }
+            }
+        }
+
+        return fieldEntity;
     }
 
     public async Task<string> ChangeSessionStateToInProgress(string sessionId, CancellationToken cancellationToken)
@@ -85,6 +106,33 @@ internal class FieldGameplayService(
         return entity.ToDto();
     }
 
+    public async Task<GameFieldDto> CheckCell(CheckCellRequest request, CancellationToken cancellationToken)
+    {
+        var entity = await fieldRepository.GetByIdAsync(request.FieldId, cancellationToken);
+
+        switch (entity.FieldConfiguration[request.Line][request.Cell])
+        {
+            case CellType.Ship:
+                entity.FieldConfiguration[request.Line][request.Cell] = CellType.DeadShip;
+                break;
+            case CellType.Forbidden:
+                entity.FieldConfiguration[request.Line][request.Cell] = CellType.ForbiddenMiss;
+                break;
+            default:
+                entity.FieldConfiguration[request.Line][request.Cell] = CellType.Miss;
+                break;
+        }
+
+        await fieldRepository.UpdateAsync(entity, cancellationToken);
+
+        if (!entity.IsPlayerField)
+        {
+            entity = HideShip(entity);
+        }
+
+        return entity.ToDto();
+    }
+
     private CellType[][] GenerateNewField()
     {
         var field = new BattleField(10);
@@ -104,5 +152,5 @@ internal class FieldGameplayService(
 
             await sessionRepository.UpdateAsync(session, cancellationToken);
         }
-    }    
+    }
 }

@@ -6,7 +6,9 @@ export enum CellType{
     Ship = 1,
     Empty,
     Forbidden,
-    DeadShip
+    DeadShip,
+    Miss,
+    ForbiddenMiss
 }
 
 export interface FieldDto {
@@ -14,4 +16,10 @@ export interface FieldDto {
     sessionId: string,
     isPlayerField: boolean,
     fieldConfiguration: CellType[][]
+}
+
+export interface CheckCellApiRequest{
+    fieldId: string,
+    line: number,
+    cell: number
 }
