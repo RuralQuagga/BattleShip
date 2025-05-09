@@ -1,9 +1,11 @@
 import { CellType, FieldMatrix } from '../../models/field/fieldMatrix';
 import { View as DefaultView, StyleSheet } from 'react-native';
 
-export type FieldProps = DefaultView['props'] & FieldMatrix;
+export type Props = {
+  matrix: CellType[][] | undefined,
+};
 
-export function Field(props: FieldProps) {
+export function Field(props: Props) {
   const {...otherProps } = props;
 
   const getColorByType = (item: CellType): string => {
@@ -19,7 +21,7 @@ export function Field(props: FieldProps) {
     }
   };
 
-  const fieldData = props.Items.map((line, index) => (
+  const fieldData = props.matrix?.map((line, index) => (
     <DefaultView key={index} style={style.line}>
       {line.map((cell, cellIndex) => (
         <DefaultView

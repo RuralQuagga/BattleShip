@@ -18,5 +18,6 @@ internal class BattleShipDbContext: DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<GameSession>().ToCollection("gameSession");
+        modelBuilder.Entity<GameField>().ToCollection("gameField");
     }
 }

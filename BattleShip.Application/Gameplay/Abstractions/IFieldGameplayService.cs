@@ -1,10 +1,13 @@
-﻿using BattleShip.Common.Enums;
+﻿using BattleShip.Application.Models;
+using BattleShip.Common.Enums;
 
 namespace BattleShip.Application.Gameplay.Abstractions;
 
 public interface IFieldGameplayService
 {
-    Task<CellType[][]> GenerateBattleField();
+    Task<GameFieldDto> GenerateBattleField(string sessionId, FieldType fieldType, CancellationToken cancellationToken);
+
+    Task<GameFieldDto> RegenerateBattleField(string fieldId, CancellationToken cancellationToken);
 
     Task<string> StartNewSession(CancellationToken cancellationToken);
 
