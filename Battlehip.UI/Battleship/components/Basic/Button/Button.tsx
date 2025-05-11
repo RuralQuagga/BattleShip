@@ -18,11 +18,13 @@ type ButtonProps = {
   pressedBtnStyle?: ViewStyle;
   textStyle?: TextStyle;
   imgStyle?: ImageStyle; 
+  disabled?: boolean;
 };
 
 export const Button = (props: ButtonProps) => {
   return (
-    <Pressable
+    <Pressable    
+      disabled={props.disabled}
       onPress={props.onPress}
       style={({ pressed }) => [
         [style.button, props.btnStyle],

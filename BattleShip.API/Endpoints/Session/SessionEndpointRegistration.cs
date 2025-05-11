@@ -15,5 +15,11 @@ public static class SessionEndpointRegistration
             .WithTags("Session")
             .Produces<string>()
             .WithOpenApi();
+
+        app.MapGet("/gameplay/session/in-progress", GetSessionInProgressEndpoint.ExecuteAsync)
+            .WithName("Check InProgress Game Session")
+            .WithTags("Session")
+            .Produces<string?>()
+            .WithOpenApi();
     }
 }

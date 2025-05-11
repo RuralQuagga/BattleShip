@@ -10,7 +10,7 @@ export type RootStackParamList = {
   StartPage: undefined;
   StatisticPage: undefined;
   PlayPage: undefined;
-  GamePage: {field?: FieldDto, sessionId: string};
+  GamePage: {field?: FieldDto, sessionId: string | null};
   UserField: {sessionId: string};
 };
 

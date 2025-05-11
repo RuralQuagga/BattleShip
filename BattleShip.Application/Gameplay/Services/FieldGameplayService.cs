@@ -61,13 +61,7 @@ internal class FieldGameplayService(
 
     public async Task<string> ChangeSessionStateToInProgress(string sessionId, CancellationToken cancellationToken)
     {
-        var session = await sessionRepository.GetByIdAsync(sessionId, cancellationToken);       
-
-        if(session.State != SessionState.Preparing)
-        {
-            throw new InvalidOperationException($"State of session with Id {session.Id} is {session.State}");
-        }
-
+        var session = await sessionRepository.GetByIdAsync(sessionId, cancellationToken);            
         session.State = SessionState.InProgress;
         await sessionRepository.UpdateAsync(session, cancellationToken);
 
@@ -176,6 +170,13 @@ internal class FieldGameplayService(
             Field = field.ToDto(),
             IsSuccessCheck = result.IsSuccessCheck
         };
+    }
+
+    public async Task<string?> CheckSessionInProgress(CancellationToken cancellationToken)
+    {
+        var session = await sessionRepository.SingleOrDefault(s => s.State == SessionState.InProgress, cancellationToken);
+
+        return session?.Id;
     }
 
     private UpdateUnderMoveFieldDto UpdateUnderMoveField(CellType[][] field, int line, int cell)

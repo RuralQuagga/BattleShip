@@ -18,4 +18,6 @@ public interface IFieldGameplayService
     Task<GameFieldDto> GetGameField(string sessionId, FieldType fieldType, CancellationToken cancellationToken);
 
     Task<CheckCellResponse> GetComputerMove(string fieldId, CancellationToken cancellationToken);
+
+    Task<string?> CheckSessionInProgress(CancellationToken cancellationToken);
 }

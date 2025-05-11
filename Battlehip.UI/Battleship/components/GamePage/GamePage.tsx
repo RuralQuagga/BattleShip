@@ -7,6 +7,7 @@ import { globalStyle } from '../../constants/GlobalStyles';
 import { useEffect, useState } from 'react';
 import { FieldDto } from '../../models/field/fieldMatrix';
 import { GetField } from '../../endpoints/batleFieldEndpoints';
+import { SetSessionStatusToInProgress } from '../../endpoints/gameSessionEndpoints';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GamePage'>;
 
@@ -23,6 +24,9 @@ export const GamePage = ({ navigation, route }: Props) => {
 
   const getAndSetComputerField = async () => {
     try {
+        if(sessionId === null){
+            return;
+        }
       const field = await GetField(sessionId, false);
       setFieldState(field);
     } catch (err) {
@@ -33,12 +37,13 @@ export const GamePage = ({ navigation, route }: Props) => {
   };
 
   useEffect(() => {
-    if (isSucceed === false) {
+    if (isSucceed === false && sessionId !== null) {
       navigation.navigate('UserField', { sessionId: sessionId });
     }
   }, [isSucceed]);
 
   useEffect(() => {
+    SetSessionStatusToInProgress(sessionId);
     if (!field) {
       getAndSetComputerField();
     }else{

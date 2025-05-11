@@ -21,7 +21,7 @@ export const UserField = ({ navigation, route }: Props) => {
   const [polling, setPolling] = useState<boolean>(false);   
   const [isSucceed, setIsSucceed] = useState<boolean | null>(null);
 
-  const POLLING_INTERVAL = 5000;
+  const POLLING_INTERVAL = 2000;
 
   const shouldStopPolling = (response: CheckCellApiResponse): boolean => {
     return !response.isSuccessCheck;
