@@ -6,6 +6,7 @@ using BattleShip.Common.Enums;
 using BattleShip.Persistance.MongoDb.Entities;
 using BattleShip.Persistance.MongoDb.Repository;
 using MongoDB.Bson;
+using SharpCompress.Common;
 
 namespace BattleShip.Application.Gameplay.Services;
 
@@ -106,22 +107,12 @@ internal class FieldGameplayService(
         return entity.ToDto();
     }
 
-    public async Task<GameFieldDto> CheckCell(CheckCellRequest request, CancellationToken cancellationToken)
+    public async Task<CheckCellResponse> CheckCell(CheckCellRequest request, CancellationToken cancellationToken)
     {
-        var entity = await fieldRepository.GetByIdAsync(request.FieldId, cancellationToken);
+        var entity = await fieldRepository.GetByIdAsync(request.FieldId, cancellationToken);        
 
-        switch (entity.FieldConfiguration[request.Line][request.Cell])
-        {
-            case CellType.Ship:
-                entity.FieldConfiguration[request.Line][request.Cell] = CellType.DeadShip;
-                break;
-            case CellType.Forbidden:
-                entity.FieldConfiguration[request.Line][request.Cell] = CellType.ForbiddenMiss;
-                break;
-            default:
-                entity.FieldConfiguration[request.Line][request.Cell] = CellType.Miss;
-                break;
-        }
+        var result = UpdateUnderMoveField(entity.FieldConfiguration, request.Line, request.Cell);
+        entity.FieldConfiguration = result.Field;
 
         await fieldRepository.UpdateAsync(entity, cancellationToken);
 
@@ -130,7 +121,86 @@ internal class FieldGameplayService(
             entity = HideShip(entity);
         }
 
-        return entity.ToDto();
+        return new CheckCellResponse
+        {
+            Field = entity.ToDto(),
+            IsSuccessCheck = result.IsSuccessCheck
+        };
+    }
+
+    public async Task<GameFieldDto> GetGameField(string sessionId, FieldType fieldType, CancellationToken cancellationToken)
+    {
+        var isPlayerField = fieldType == FieldType.User;
+        var field = await fieldRepository.SingleOrDefault(f => f.SessionId.Equals(sessionId, StringComparison.OrdinalIgnoreCase) 
+                            && f.IsPlayerField == isPlayerField, cancellationToken);
+
+        if(field is null)
+        {
+            var fieldName = isPlayerField ? "User" : "Computer";
+            throw new InvalidOperationException($"Session with id {sessionId} do not have {fieldName} field");
+        }
+
+        if (!field.IsPlayerField)
+        {
+            field = HideShip(field);
+        }
+
+        return field.ToDto();
+    }
+
+    public async Task<CheckCellResponse> GetComputerMove(string fieldId, CancellationToken cancellationToken)
+    {
+        var field = await fieldRepository.GetByIdAsync(fieldId, cancellationToken);
+
+        var random = new Random(DateTime.Now.Microsecond);
+        var computerExecution = true;
+        var result = new UpdateUnderMoveFieldDto();
+
+        while (computerExecution)
+        {
+            var lineIndex = random.Next(field.FieldConfiguration.Length);
+            var cellIndex = random.Next(field.FieldConfiguration.Length);
+
+            if (field.FieldConfiguration[lineIndex][cellIndex] != CellType.Miss 
+                || field.FieldConfiguration[lineIndex][cellIndex] != CellType.ForbiddenMiss)
+            {
+                result = UpdateUnderMoveField(field.FieldConfiguration, lineIndex, cellIndex);
+                field.FieldConfiguration = result.Field;
+                computerExecution = false;
+            }
+        }
+
+        await fieldRepository.UpdateAsync(field, cancellationToken);
+        return new CheckCellResponse
+        {
+            Field = field.ToDto(),
+            IsSuccessCheck = result.IsSuccessCheck
+        };
+    }
+
+    private UpdateUnderMoveFieldDto UpdateUnderMoveField(CellType[][] field, int line, int cell)
+    {
+        var isSucceedCheck = false;
+
+        switch (field[line][cell])
+        {
+            case CellType.Ship:
+                field[line][cell] = CellType.DeadShip;
+                isSucceedCheck = true;
+                break;
+            case CellType.Forbidden:
+                field[line][cell] = CellType.ForbiddenMiss;
+                break;
+            default:
+                field[line][cell] = CellType.Miss;
+                break;
+        }
+
+        return new UpdateUnderMoveFieldDto
+        {
+            Field = field,
+            IsSuccessCheck = isSucceedCheck
+        };
     }
 
     private CellType[][] GenerateNewField()

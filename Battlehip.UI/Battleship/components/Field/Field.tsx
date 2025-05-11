@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react';
-import { CellType, CheckCellApiRequest, FieldDto } from '../../models/field/fieldMatrix';
+import { CellType, FieldDto } from '../../models/field/fieldMatrix';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { CheckCell } from '../../endpoints/batleFieldEndpoints';
 
 export type Props = {
   field: FieldDto | undefined,
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  checkCell: (index:number, cellIndex: number) => void,
 };
 
 export function Field(props: Props) {
-  const {...otherProps } = props;
-  const [field, setField] = useState<FieldDto>();
-
   const getColorByType = (item: CellType): string => {
     switch(item){
       case CellType.Empty: 
@@ -22,37 +18,19 @@ export function Field(props: Props) {
         return 'black';
       case CellType.DeadShip:
         return 'red';
-      case CellType.ForbiddenMiss || CellType.Miss :
-        return 'blue'
+      case CellType.ForbiddenMiss:
+        return 'blue';
+      case CellType.Miss:
+        return 'blue';
       default:
         return 'green'
     }
-  }; 
-  
-  const checkCell = async (line: number, cell: number) =>{
-    if(!field){
-      throw new Error("Field is undefined");
-    }
-    const request: CheckCellApiRequest = {
-      fieldId: field.fieldId,
-      line,
-      cell
-    };
+  };    
 
-    const result = await CheckCell(request);
-    setField(result.data);
-  }
-
-  useEffect(()=>{
-    if(!field){
-      setField(props.field);
-    }    
-  })
-
-  const fieldData = field?.fieldConfiguration.map((line, index) => (
+  const fieldData = props.field?.fieldConfiguration.map((line, index) => (
     <View key={index} style={style.line}>
       {line.map((cell, cellIndex) => (
-        <Pressable style={style.prsbl} onPress={() => {!props.isReadOnly && checkCell(index, cellIndex)}}>        
+        <Pressable style={style.prsbl} onPress={() => {!props.isReadOnly && props.checkCell(index, cellIndex)}}>        
         <View          
           key={index + cellIndex}          
           style={[{backgroundColor: getColorByType(cell)}, style.cell]}
@@ -63,7 +41,7 @@ export function Field(props: Props) {
   ));
   
   return (
-    <View style={style.field} {...otherProps}>
+    <View style={style.field}>
       {fieldData}
     </View>
   );
