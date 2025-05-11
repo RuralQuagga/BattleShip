@@ -16,13 +16,25 @@ public static class FieldEndpointRegistration
         app.MapPost("/gameplay/field/check-cell", CheckCellEndpoint.ExecuteAsync)
             .WithName("Check cell")
             .WithTags("Gameplay")
-            .Produces<GameFieldDto>()
+            .Produces<CheckCellResponse>()
             .WithOpenApi();
 
         app.MapPut("/gameplay/field/regenerate", RegenerateFieldEndpoint.ExecuteAsync)
             .WithName("Regenerate Field")
             .WithTags("Gameplay")
             .Produces<GameFieldDto>()
+            .WithOpenApi();
+
+        app.MapGet("/gameplay/field", GetGameFieldEndpoint.ExecuteAsync)
+            .WithName("Get Game Field")
+            .WithTags("Gameplay")
+            .Produces<GameFieldDto>()
+            .WithOpenApi();
+
+        app.MapGet("/gameplay/field/computer-move", GetComputerCheckCellEndpoint.ExecuteAsync)
+            .WithName("Get Field after computer move")
+            .WithTags("Gameplay")
+            .Produces<CheckCellResponse>()
             .WithOpenApi();
     }
 }

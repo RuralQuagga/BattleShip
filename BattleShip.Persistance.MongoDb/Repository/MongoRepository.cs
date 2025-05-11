@@ -31,6 +31,13 @@ internal class MongoRepository<T> : IRepository<T> where T : class
         }
     }
 
+    public async Task<T> SingleOrDefault(System.Linq.Expressions.Expression<Func<T, bool>> filterOptions, CancellationToken cancellationToken)
+    {
+        var result = await _dbSet.SingleOrDefaultAsync(filterOptions, cancellationToken);
+
+        return result;
+    }
+
     public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _dbSet.ToListAsync(cancellationToken);

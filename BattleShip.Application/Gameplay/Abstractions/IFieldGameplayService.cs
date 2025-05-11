@@ -13,5 +13,9 @@ public interface IFieldGameplayService
 
     Task<string> ChangeSessionStateToInProgress(string sessionId, CancellationToken cancellationToken);
 
-    Task<GameFieldDto> CheckCell(CheckCellRequest request, CancellationToken cancellationToken);
+    Task<CheckCellResponse> CheckCell(CheckCellRequest request, CancellationToken cancellationToken);
+
+    Task<GameFieldDto> GetGameField(string sessionId, FieldType fieldType, CancellationToken cancellationToken);
+
+    Task<CheckCellResponse> GetComputerMove(string fieldId, CancellationToken cancellationToken);
 }

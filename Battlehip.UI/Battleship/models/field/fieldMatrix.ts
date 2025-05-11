@@ -23,3 +23,13 @@ export interface CheckCellApiRequest{
     line: number,
     cell: number
 }
+
+export interface CheckCellApiResponse{
+    field: FieldDto,
+    isSuccessCheck: boolean,
+}
+
+export interface FieldReducerState{
+    userFieldId: string,
+    computerFieldId: string
+}
