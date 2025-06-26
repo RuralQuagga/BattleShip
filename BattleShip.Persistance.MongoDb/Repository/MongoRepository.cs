@@ -1,6 +1,7 @@
 ﻿
 using BattleShip.Persistance.MongoDb.Configuration;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BattleShip.Persistance.MongoDb.Repository;
 
@@ -38,6 +39,9 @@ internal class MongoRepository<T> : IRepository<T> where T : class
         return result;
     }
 
+    public async Task<bool> AnyAsync(System.Linq.Expressions.Expression<Func<T, bool>> filterOptions, CancellationToken cancellationToken) =>
+        await _dbSet.AnyAsync(filterOptions, cancellationToken);
+
     public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _dbSet.ToListAsync(cancellationToken);
@@ -58,6 +62,14 @@ internal class MongoRepository<T> : IRepository<T> where T : class
     public async Task UpdateAsync(T entity, CancellationToken cancellationToken)
     {
         _dbSet.Update(entity);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(Expression<Func<T, bool>> filterOptions, CancellationToken cancellationToken)
+    {
+        var toRemove = await _dbSet.Where(filterOptions).ToArrayAsync(cancellationToken);
+        _dbSet.RemoveRange(toRemove);
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

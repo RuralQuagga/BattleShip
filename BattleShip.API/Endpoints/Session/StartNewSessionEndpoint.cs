@@ -8,9 +8,9 @@ namespace BattleShip.API.Endpoints.Session
             IFieldGameplayService service,
             CancellationToken cancellationToken)
         {
-            var sessionId = await service.StartNewSession(cancellationToken);
+            var result = await service.StartNewSession(cancellationToken);
 
-            return Results.Ok(sessionId);
+            return Results.Ok(result);
         }
     }
 }

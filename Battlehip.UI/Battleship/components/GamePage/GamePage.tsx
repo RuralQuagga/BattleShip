@@ -5,24 +5,42 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Battlefield } from '../BattleField/BattleField';
 import { globalStyle } from '../../constants/GlobalStyles';
 import { useEffect, useState } from 'react';
-import { FieldDto } from '../../models/field/fieldMatrix';
+import { ActionState, FieldDto } from '../../models/field/fieldMatrix';
 import { GetField } from '../../endpoints/batleFieldEndpoints';
+import { SetSessionStatusToInProgress } from '../../endpoints/gameSessionEndpoints';
+import { useAppDispatch, useAppSelector } from '../../store/type';
+import { updateSession } from '../../store/reducers/gameSessionReducer';
+import {
+  Session,
+  SessionState,
+} from '../../models/gameSession/gameSessionTypes';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GamePage'>;
 
 export const GamePage = ({ navigation, route }: Props) => {
   const { sessionId, field } = route.params;
-  const [isSucceed, setIsSucceed] = useState<boolean | null>(null);
+  const session = useAppSelector((state) => state.session);
+  const dispatch = useAppDispatch();
+  const [actionState, setActionState] = useState<ActionState | null>(null);
   const [fieldState, setFieldState] = useState<FieldDto>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
-  const setIsSucceedCheck = (isSucceedCheck: boolean) => {
-    setIsSucceed(isSucceedCheck);
+  const setIsSucceedCheck = (isSucceedCheck: ActionState) => {
+    setActionState(isSucceedCheck);
+  };
+
+  const changeSessionState = async (sessionId: string | null) => {
+    if (session.state === SessionState.InProgress || sessionId === null) return;
+    const updatedSession = await SetSessionStatusToInProgress(sessionId);
+    dispatch(updateSession(updatedSession.data as Session));
   };
 
   const getAndSetComputerField = async () => {
     try {
+      if (sessionId === null) {
+        return;
+      }
       const field = await GetField(sessionId, false);
       setFieldState(field);
     } catch (err) {
@@ -33,27 +51,31 @@ export const GamePage = ({ navigation, route }: Props) => {
   };
 
   useEffect(() => {
-    if (isSucceed === false) {
+    if (actionState === ActionState.Fail && sessionId !== null) {
       navigation.navigate('UserField', { sessionId: sessionId });
     }
-  }, [isSucceed]);
+    if (actionState === ActionState.Lose || actionState === ActionState.Win) {
+      navigation.navigate('GameOverPage', { state: actionState });
+    }
+  }, [actionState]);
 
   useEffect(() => {
+    changeSessionState(sessionId);
     if (!field) {
       getAndSetComputerField();
-    }else{
-        setFieldState(field);
-        setLoading(false);
+    } else {
+      setFieldState(field);
+      setLoading(false);
     }
   }, []);
 
   if (loading) {
-      return <ActivityIndicator size='large' />;
-    }
-  
-    if (error !== '') {
-      return <Text>Ошибка: {error}</Text>;
-    }
+    return <ActivityIndicator size='large' />;
+  }
+
+  if (error !== '') {
+    return <Text>Ошибка: {error}</Text>;
+  }
 
   return (
     <>
