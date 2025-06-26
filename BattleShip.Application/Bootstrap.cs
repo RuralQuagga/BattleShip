@@ -12,6 +12,8 @@ public static class Bootstrap
     {
         services.RegisterPersistance(configuration);
         services.AddScoped<IFieldGameplayService, FieldGameplayService>();
+        services.AddScoped<IShipService, ShipService>();
+        services.AddScoped<IHistoryService, HistoryService>();
 
         return services;
     }

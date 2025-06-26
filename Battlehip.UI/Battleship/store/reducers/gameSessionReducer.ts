@@ -1,16 +1,27 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SessionId } from "../../models/gameSession/gameSessionTypes";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  Session,
+  SessionState,
+} from '../../models/gameSession/gameSessionTypes';
 
-const initialState: SessionId = { sessionId: "" }
+const initialState: Session = {
+  id: '',
+  sessionEnd: null,
+  sessionStart: null,
+  state: null,
+};
 const SessionReducer = createSlice({
-    name: 'SessionId',
-    initialState,
-    reducers: {
-        addNew: (state, action: PayloadAction<string>) => {
-            state.sessionId = action.payload;
-        },
+  name: 'SessionId',
+  initialState,
+  reducers: {
+    addNew: (state, action: PayloadAction<Session>) => {
+      return { ...state, ...action.payload };
     },
-})
+    updateSession: (state, action: PayloadAction<Session>) => {
+      return { ...state, ...action.payload };
+    },
+  },
+});
 
-export const { addNew } = SessionReducer.actions;
+export const { addNew, updateSession } = SessionReducer.actions;
 export default SessionReducer.reducer;

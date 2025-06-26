@@ -1,35 +1,42 @@
 export type FieldMatrix = {
-    Items: CellType[][]
+  Items: CellType[][];
+};
+
+export enum CellType {
+  Ship = 1,
+  Empty,
+  Forbidden,
+  DeadShip,
+  Miss,
+  ForbiddenMiss,
 }
 
-export enum CellType{
-    Ship = 1,
-    Empty,
-    Forbidden,
-    DeadShip,
-    Miss,
-    ForbiddenMiss
+export enum ActionState {
+  Success = 1,
+  Fail,
+  Win,
+  Lose,
 }
 
 export interface FieldDto {
-    fieldId: string,
-    sessionId: string,
-    isPlayerField: boolean,
-    fieldConfiguration: CellType[][]
+  fieldId: string;
+  sessionId: string;
+  isPlayerField: boolean;
+  fieldConfiguration: CellType[][];
 }
 
-export interface CheckCellApiRequest{
-    fieldId: string,
-    line: number,
-    cell: number
+export interface CheckCellApiRequest {
+  fieldId: string;
+  line: number;
+  cell: number;
 }
 
-export interface CheckCellApiResponse{
-    field: FieldDto,
-    isSuccessCheck: boolean,
+export interface CheckCellApiResponse {
+  field: FieldDto;
+  isSuccessCheck: ActionState;
 }
 
-export interface FieldReducerState{
-    userFieldId: string,
-    computerFieldId: string
+export interface FieldReducerState {
+  userFieldId: string;
+  computerFieldId: string;
 }

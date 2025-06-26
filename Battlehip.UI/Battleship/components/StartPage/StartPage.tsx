@@ -63,7 +63,7 @@ const StartPage = ({ navigation }: Props) => {
                 onPress={() => navigation.navigate('PlayPage')}
               />
               <Button
-                disabled={lastSessionId !== null}
+                disabled={lastSessionId === null}
                 title='Continue'
                 btnStyle={style.btn}
                 textStyle={style.btnName}

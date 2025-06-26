@@ -6,5 +6,5 @@ internal class UpdateUnderMoveFieldDto
 {
     internal CellType[][] Field { get; set; } = null!;
 
-    internal bool IsSuccessCheck { get; set; }
+    internal ActionState ActionState { get; set; }
 }

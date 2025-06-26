@@ -16,7 +16,7 @@ namespace BattleShip.Persistance.MongoDb
             services.AddDbContext<BattleShipDbContext>(options =>
             {
                 options.UseMongoDB(connectionString, databaseName);
-            });
+            });            
 
             services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));
 

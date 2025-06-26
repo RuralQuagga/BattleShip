@@ -13,10 +13,13 @@ import {
   GetBattlefield,
   RegenerateBattlefield,
 } from '../../../endpoints/batleFieldEndpoints';
+import { Session } from '../../../models/gameSession/gameSessionTypes';
+import { useAppDispatch } from '../../../store/type';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PlayPage'>;
 
 export const PlayPage = ({ navigation }: Props) => {
+  const dispatch = useAppDispatch();
   const [sessionId, setSessionId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -36,8 +39,8 @@ export const PlayPage = ({ navigation }: Props) => {
   const fetchData = async () => {
     try {
       const response = await startSession();
-      setSessionId(response.data as string);
-      addNew(response.data as string);
+      setSessionId((response.data as Session).id);
+      dispatch(addNew(response.data as Session));
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -100,7 +103,7 @@ export const PlayPage = ({ navigation }: Props) => {
           </Text>
         </View>
         <View style={style.playContainer}>
-          <Battlefield gameField={myField} isReadonly={true}/>
+          <Battlefield gameField={myField} isReadonly={true} />
           <View style={style.btnContainer}>
             <Button
               title='Regenerate'

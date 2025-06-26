@@ -1,4 +1,6 @@
-﻿using BattleShip.Common.Enums;
+﻿using BattleShip.Application.Gameplay.Abstractions;
+using BattleShip.Common.Enums;
+using MongoDB.Bson;
 
 namespace BattleShip.Application.Objects.Field;
 
@@ -32,7 +34,7 @@ public class BattleField
         }
     }
 
-    public void GenerateField()
+    public async void GenerateField()
     {
         for (var shipSize = SHIP_MAX_SIZE; shipSize > 0; shipSize--)
         {
@@ -51,7 +53,7 @@ public class BattleField
             var startCellIndex = 0;
             if (CanAddToLine(lineIndex, shipSize, ref startCellIndex))
             {
-                AddShipToLine(lineIndex, shipSize, startCellIndex);
+                AddShipToLine(lineIndex, shipSize, startCellIndex);                
                 return;
             }
 
@@ -59,7 +61,7 @@ public class BattleField
             startCellIndex = 0;
             if (CanAddToLine(lineIndex, shipSize, ref startCellIndex))
             {
-                AddShipToLine(lineIndex, shipSize, startCellIndex);
+                AddShipToLine(lineIndex, shipSize, startCellIndex);                
                 return;
             }
         }
