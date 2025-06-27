@@ -8,3 +8,6 @@ export const START_GAME_SESSION = '/gameplay/session/create';
 export const CHANGE_SESSION_STATE_BEGIN = '/gameplay/session/';
 export const CHANGE_SESSION_STATE_END = '/start-play';
 export const GET_SESSION_IN_PROGRESS = '/gameplay/session/in-progress';
+export const GET_SESSION_STATISTIC = '/gameplay/session/statistic';
+export const GET_FULL_STATISTIC = '/gameplay/session/full-statistic';
+export const CLEAR_ALL_STATISTIC = '/gameplay/clear-all';

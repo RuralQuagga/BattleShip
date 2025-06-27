@@ -54,8 +54,14 @@ export const GamePage = ({ navigation, route }: Props) => {
     if (actionState === ActionState.Fail && sessionId !== null) {
       navigation.navigate('UserField', { sessionId: sessionId });
     }
-    if (actionState === ActionState.Lose || actionState === ActionState.Win) {
-      navigation.navigate('GameOverPage', { state: actionState });
+    if (
+      sessionId !== null &&
+      (actionState === ActionState.Lose || actionState === ActionState.Win)
+    ) {
+      navigation.navigate('GameOverPage', {
+        state: actionState,
+        sessionId: sessionId,
+      });
     }
   }, [actionState]);
 

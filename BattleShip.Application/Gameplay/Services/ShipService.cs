@@ -144,4 +144,9 @@ internal class ShipService(IRepository<ShipEntity> shipRepository) : IShipServic
 
         return ships.Where(s => s.FieldId.Equals(fieldId, StringComparison.OrdinalIgnoreCase)).All(s => s.State == ShipState.Dead);
     }
+
+    public async Task DeleteAll(CancellationToken cancellationToken)
+    {
+        await shipRepository.DeleteAll(cancellationToken);
+    }
 }

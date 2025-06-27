@@ -40,3 +40,10 @@ export interface FieldReducerState {
   userFieldId: string;
   computerFieldId: string;
 }
+
+export interface GameStatistic {
+  gameTimeMs: number;
+  yourMoves: number;
+  enemyMoves: number;
+  hitPercentage: number;
+}

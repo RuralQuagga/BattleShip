@@ -13,7 +13,7 @@ export type RootStackParamList = {
   PlayPage: undefined;
   GamePage: { field?: FieldDto; sessionId: string | null };
   UserField: { sessionId: string };
-  GameOverPage: { state: ActionState };
+  GameOverPage: { state: ActionState; sessionId: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

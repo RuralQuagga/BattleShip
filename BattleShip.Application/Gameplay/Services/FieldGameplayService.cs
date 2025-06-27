@@ -135,6 +135,13 @@ public class FieldGameplayService(
         }
 
         var isAllShipsDead = await shipService.IsAllShipsDead(request.FieldId, cancellationToken);
+        if (isAllShipsDead)
+        {
+            var session = await sessionRepository.GetByIdAsync(entity.SessionId, cancellationToken);
+            session.State = SessionState.Win;
+            session.SessionEnd = DateTime.Now;
+            await sessionRepository.UpdateAsync(session, cancellationToken);
+        }
 
         return new CheckCellResponse
         {
@@ -189,6 +196,13 @@ public class FieldGameplayService(
         await fieldRepository.UpdateAsync(field, cancellationToken);
 
         var isAllShipsDead = await shipService.IsAllShipsDead(fieldId, cancellationToken);
+        if (isAllShipsDead)
+        {
+            var session = await sessionRepository.GetByIdAsync(field.SessionId, cancellationToken);
+            session.State = SessionState.Loss;
+            session.SessionEnd = DateTime.Now;
+            await sessionRepository.UpdateAsync(session, cancellationToken);
+        }
 
         return new CheckCellResponse
         {
@@ -474,4 +488,46 @@ public class FieldGameplayService(
             CellType.ForbiddenMiss => "m",
             _ => throw new InvalidOperationException()
         };
+
+    public async Task<StatisticModel> GetSessionStatistic(string sessionId, CancellationToken cancellationToken)
+    {
+        var session = await sessionRepository.GetByIdAsync(sessionId, cancellationToken);
+        var history = await historyService.GetSessionHistory(sessionId, cancellationToken);
+
+        if(session is null || history is null || history.Count() == 0)
+        {
+            return new StatisticModel();
+        }
+
+        return new StatisticModel
+        {
+            GameTimeMs = (session.SessionEnd - session.SessionStart)?.Microseconds ?? 0,
+            YourMoves = history.Count(h => h.IsPlayerAction),
+            EnemyMoves = history.Count(h => !h.IsPlayerAction),
+            HitPercentage = (float)history.Count(h => h.IsPlayerAction && h.IsSuccessAction) / history.Count(h => h.IsPlayerAction) * 100
+        };
+    }
+
+    public async Task<List<StatisticModel>> GetFullStatistic(CancellationToken cancellationToken)
+    {
+        var sessions = await sessionRepository.GetAllAsync(cancellationToken);
+        var sessionsToCheck = sessions.Where(s => s.State == SessionState.Win || s.State == SessionState.Loss);
+        var result = new List<StatisticModel>();
+
+        foreach(var session in sessionsToCheck)
+        {
+            var statistic = await GetSessionStatistic(session.Id, cancellationToken);
+            result.Add(statistic);
+        }
+
+        return result;
+    }
+
+    public async Task ClearStatistic(CancellationToken cancellationToken)
+    {
+        await sessionRepository.DeleteAll(cancellationToken);
+        await fieldRepository.DeleteAll(cancellationToken);
+        await shipService.DeleteAll(cancellationToken);
+        await historyService.DeleteAll(cancellationToken);
+    }
 }

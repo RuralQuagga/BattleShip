@@ -115,7 +115,10 @@ export const UserField = ({ navigation, route }: Props) => {
       navigation.navigate('GamePage', { sessionId: sessionId });
     }
     if (actionState === ActionState.Win || actionState === ActionState.Lose) {
-      navigation.navigate('GameOverPage', { state: actionState });
+      navigation.navigate('GameOverPage', {
+        state: actionState,
+        sessionId: sessionId,
+      });
     }
   }, [actionState]);
 
