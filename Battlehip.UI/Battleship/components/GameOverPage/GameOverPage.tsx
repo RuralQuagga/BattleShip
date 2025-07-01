@@ -61,13 +61,18 @@ const style = StyleSheet.create({
   title: {
     marginTop: '10%',
   },
-  gameFieldContainer: {
-    flex: 5,
-  },
   statisticContainer: {
     flex: 1,
+    alignItems: 'center',
+    backgroundColor: 'rgba(101, 153, 170, 0.69)',
+    borderRadius: 10,
+    paddingBottom: 16,
   },
   statisticPanelContainer: {
-    flex: 3,
+    alignItems: 'center',
+    flex: 1,
+    padding: 16,
+    width: '90%',
+    margin: 3,
   },
 });

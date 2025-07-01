@@ -279,7 +279,7 @@ public class FieldGameplayService(
 
     private Point GetRandomPoint(GameField field)
     {
-        var subFieldHalfSize = 2;
+        var subFieldHalfSize = 3;
         var random = new Random(DateTime.Now.Microsecond);        
         var freeCell = field.FieldConfiguration.SelectMany((row, rowIndex) =>
         row.Select((cell, colIndex) => (cell, rowIndex, colIndex))
@@ -520,9 +520,10 @@ public class FieldGameplayService(
             return new StatisticModel();
         }
 
+        var time = session.SessionEnd.Value - session.SessionStart;
         return new StatisticModel
         {
-            GameTimeMs = (session.SessionEnd - session.SessionStart)?.Microseconds ?? 0,
+            GameTimeMs = time.Milliseconds,
             YourMoves = history.Count(h => h.IsPlayerAction),
             EnemyMoves = history.Count(h => !h.IsPlayerAction),
             HitPercentage = (float)history.Count(h => h.IsPlayerAction && h.IsSuccessAction) / history.Count(h => h.IsPlayerAction) * 100
