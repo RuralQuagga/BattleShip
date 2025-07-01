@@ -279,15 +279,36 @@ public class FieldGameplayService(
 
     private Point GetRandomPoint(GameField field)
     {
+        var subFieldHalfSize = 2;
         var random = new Random(DateTime.Now.Microsecond);        
         var freeCell = field.FieldConfiguration.SelectMany((row, rowIndex) =>
         row.Select((cell, colIndex) => (cell, rowIndex, colIndex))
-    .Where(x => x.cell == CellType.Ship || x.cell == CellType.Empty || x.cell == CellType.Forbidden)
+    .Where(x => x.cell == CellType.Ship)
     .Select(x => new Point(x.colIndex, x.rowIndex))
     .ToList());
 
-        return freeCell.ElementAt(random.Next(freeCell.Count()));
-    }
+        var shipPointToTryAim = freeCell.ElementAt(random.Next(freeCell.Count()));
+
+        var startPointX = shipPointToTryAim.X < subFieldHalfSize ? 0 : shipPointToTryAim.X - subFieldHalfSize;
+        var startPointY = shipPointToTryAim.Y < subFieldHalfSize ? 0 : shipPointToTryAim.Y - subFieldHalfSize;
+        var endPointX = shipPointToTryAim.X + subFieldHalfSize > field.FieldConfiguration.Length - 1 ? field.FieldConfiguration.Length - 1 : shipPointToTryAim.X + subFieldHalfSize;
+        var endPointY = shipPointToTryAim.Y + subFieldHalfSize > field.FieldConfiguration.Length - 1 ? field.FieldConfiguration.Length - 1 : shipPointToTryAim.Y + subFieldHalfSize;
+
+        var fieldToCheck = new List<Point>();       
+        for(var line = startPointY; line <= endPointY; line++)
+        {            
+            for(var cell = startPointX; cell <= endPointX; cell++)
+            {
+                fieldToCheck.Add(new Point(cell, line));
+            }            
+        }
+
+        var availablePointsToCheck = fieldToCheck.Where(point => field.FieldConfiguration[point.Y][point.X] != CellType.Miss
+                || field.FieldConfiguration[point.Y][point.X] != CellType.ForbiddenMiss
+                || field.FieldConfiguration[point.Y][point.X] != CellType.DeadShip);
+
+        return availablePointsToCheck.ElementAt(random.Next(availablePointsToCheck.Count()));
+    }    
 
     private Point GetNextPointFromNearCells(GameField field, GameHistory lastSuccessAction)
     {
