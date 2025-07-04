@@ -523,7 +523,7 @@ public class FieldGameplayService(
         var time = session.SessionEnd.Value - session.SessionStart;
         return new StatisticModel
         {
-            GameTimeMs = time.Milliseconds,
+            GameTimeMs = time.TotalMilliseconds,
             YourMoves = history.Count(h => h.IsPlayerAction),
             EnemyMoves = history.Count(h => !h.IsPlayerAction),
             HitPercentage = (float)history.Count(h => h.IsPlayerAction && h.IsSuccessAction) / history.Count(h => h.IsPlayerAction) * 100

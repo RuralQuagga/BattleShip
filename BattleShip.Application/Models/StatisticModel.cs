@@ -2,7 +2,7 @@
 
 public class StatisticModel
 {
-    public int GameTimeMs { get; set; }
+    public double GameTimeMs { get; set; }
 
     public int YourMoves { get; set; }
 
