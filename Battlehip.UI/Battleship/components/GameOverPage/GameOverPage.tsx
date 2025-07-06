@@ -36,18 +36,16 @@ export const GameOverPage = ({ navigation, route }: Props) => {
           <Text style={[globalStyle.titleText, style.title]}>{getTitle()}</Text>
         </View>
         <View style={style.statisticContainer}>
-          <View style={style.statisticPanelContainer}>
-            {statistic !== null ? (
-              <StatisticPanel
-                gameTimeMs={statistic.gameTimeMs}
-                yourMoves={statistic.yourMoves}
-                enemyMoves={statistic.enemyMoves}
-                hitPercentage={statistic.hitPercentage}
-              />
-            ) : (
-              <></>
-            )}
-          </View>
+          {statistic !== null ? (
+            <StatisticPanel
+              gameTimeMs={statistic.gameTimeMs}
+              yourMoves={statistic.yourMoves}
+              enemyMoves={statistic.enemyMoves}
+              hitPercentage={statistic.hitPercentage}
+            />
+          ) : (
+            <></>
+          )}
         </View>
       </Layout>
     </>
@@ -66,12 +64,11 @@ const style = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(101, 153, 170, 0.69)',
     borderRadius: 10,
-    paddingBottom: 16,
+    padding: 16,
   },
   statisticPanelContainer: {
     alignItems: 'center',
     flex: 1,
-    padding: 16,
     width: '90%',
     margin: 3,
   },
