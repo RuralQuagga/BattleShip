@@ -14,6 +14,8 @@ public interface IRepository<T> where T : class
 
     Task DeleteAsync(System.Linq.Expressions.Expression<Func<T, bool>> filterOptions, CancellationToken cancellationToken);
 
+    Task DeleteAll(CancellationToken cancellationToken);
+
     Task<T> SingleOrDefault(System.Linq.Expressions.Expression<Func<T, bool>> filterOptions, CancellationToken cancellationToken);
 
     Task<bool> AnyAsync(System.Linq.Expressions.Expression<Func<T, bool>> filterOptions, CancellationToken cancellationToken);

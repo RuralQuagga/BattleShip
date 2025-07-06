@@ -23,5 +23,22 @@ public static class SessionEndpointRegistration
             .WithTags("Session")
             .Produces<string?>()
             .WithOpenApi();
+
+        app.MapGet("/gameplay/session/statistic", GetSessionStatisticEndpoint.ExecuteAsync)
+            .WithName("Get Game Session statistic")
+            .WithTags("Session")
+            .Produces<StatisticModel>()
+            .WithOpenApi();
+
+        app.MapGet("/gameplay/session/full-statistic", GetFullStatisticEndpoint.ExecuteAsync)
+            .WithName("Get Full statistic")
+            .WithTags("Session")
+            .Produces<StatisticModel[]>()
+            .WithOpenApi();
+
+        app.MapDelete("/gameplay/clear-all", DeleteAllStatisticEndpoint.ExecuteAsync)
+            .WithName("Reset all data")
+            .WithTags("Session")            
+            .WithOpenApi();
     }
 }

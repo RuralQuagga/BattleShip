@@ -20,4 +20,10 @@ public interface IFieldGameplayService
     Task<CheckCellResponse> GetComputerMove(string fieldId, CancellationToken cancellationToken);
 
     Task<string?> CheckSessionInProgress(CancellationToken cancellationToken);
+
+    Task<StatisticModel> GetSessionStatistic(string sessionId, CancellationToken cancellationToken);
+
+    Task<List<StatisticModel>> GetFullStatistic(CancellationToken cancellationToken);
+
+    Task ClearStatistic(CancellationToken cancellationToken);
 }

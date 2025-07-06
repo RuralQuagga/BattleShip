@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 
 type TableOfContentItemProps = {
   title: string;
-  value: number;
+  value: number | string;
 };
 
 export const TableOfContentItem = (props: TableOfContentItemProps) => {
@@ -28,11 +28,13 @@ const style = StyleSheet.create({
     fontWeight: 600,
     fontFamily: 'sans-serif-medium',
     color: '#002C4C',
+    opacity: 1,
   },
   number: {
     fontSize: 20,
     fontWeight: 600,
     fontFamily: 'sans-serif-medium',
-    color: '#002C4C',    
+    color: '#002C4C',
+    opacity: 1,
   },
 });

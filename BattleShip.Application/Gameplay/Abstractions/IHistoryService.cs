@@ -15,4 +15,8 @@ public interface IHistoryService
     Task<bool> CheckIsShipDead(ShipEntity ship, CancellationToken cancellationToken);
 
     Task<IEnumerable<GameHistory>> GetFieldHistory(string fieldId, CancellationToken cancellationToken);
+
+    Task<IEnumerable<GameHistory>> GetSessionHistory(string sessionId, CancellationToken cancellationToken);
+
+    Task DeleteAll(CancellationToken cancellationToken);
 }

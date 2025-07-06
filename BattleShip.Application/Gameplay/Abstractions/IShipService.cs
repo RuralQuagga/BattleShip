@@ -15,4 +15,6 @@ public interface IShipService
     Task DeleteOldShips(string fieldId, CancellationToken cancellationToken);
 
     Task<bool> IsAllShipsDead(string fieldId, CancellationToken cancellationToken);
+
+    Task DeleteAll(CancellationToken cancellationToken);
 }

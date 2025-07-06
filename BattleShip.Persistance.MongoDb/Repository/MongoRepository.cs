@@ -72,4 +72,12 @@ internal class MongoRepository<T> : IRepository<T> where T : class
 
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteAll(CancellationToken cancellationToken)
+    {
+        var toRemove = await _dbSet.ToArrayAsync(cancellationToken);
+        _dbSet.RemoveRange(toRemove);
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

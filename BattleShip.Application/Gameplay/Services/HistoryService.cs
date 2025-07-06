@@ -40,10 +40,22 @@ public class HistoryService(IRepository<GameHistory> historyRepository) : IHisto
         return ship.Points.All(p => actionPointsFromHistoryForCurrentShip.Contains(p));
     }
 
+    public async Task DeleteAll(CancellationToken cancellationToken)
+    {
+        await historyRepository.DeleteAll(cancellationToken);
+    }
+
     public async Task<IEnumerable<GameHistory>> GetFieldHistory(string fieldId, CancellationToken cancellationToken)
     {
         var history = await historyRepository.GetAllAsync(cancellationToken);
 
         return history.Where(h => h.FieldId.Equals(fieldId, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public async Task<IEnumerable<GameHistory>> GetSessionHistory(string sessionId, CancellationToken cancellationToken)
+    {
+        var history = await historyRepository.GetAllAsync(cancellationToken);
+
+        return history.Where(h => h.SessionId.Equals(sessionId, StringComparison.OrdinalIgnoreCase));
     }
 }
